@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 30px;
+      }
+      input, button {
+        padding: 10px;
+        margin: 10px 0;
+        width: 300px;
+      }
+      button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        cursor: pointer;
+      }
+      table {
+        margin-top: 20px;
+        border-collapse: collapse;
+        width: 100%;
+      }
+      th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+      }
+      th {
+        background-color: #f2f2f2;
+      }
+      .message {
+        margin-top: 10px;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>🔍 Student Result Search</h2>
+    <input type="text" id="rollNo" placeholder="Enter Roll Number">
+    <button onclick="searchResult()">Search</button>
+    <div id="message" class="message"></div>
+
+    <table id="resultTable" style="display:none;">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Roll No</th>
+          <th>Name</th>
+          <th>Subject</th>
+          <th>Section</th>
+          <th>Total</th>
+          <th>Bio</th>
+          <th>CA.IT</th>
+          <th>Foot</th>
+          <th>Lab</th>
+          <th>ball</th>
+        </tr>
+      </thead>
+      <tbody id="resultBody"></tbody>
+    </table>
+
+    <script>
+      function searchResult() {
+        const rollNo = document.getElementById("rollNo").value.trim();
+        const msg = document.getElementById("message");
+        const table = document.getElementById("resultTable");
+        const body = document.getElementById("resultBody");
+
+        if (!rollNo) {
+          msg.textContent = "⚠️ Please enter a Roll Number.";
+          table.style.display = "none";
+          return;
+        }
+
+        google.script.run.withSuccessHandler(function(data) {
+          if (!data) {
+            msg.textContent = "❌ No result found.";
+            table.style.display = "none";
+          } else {
+            msg.textContent = "✅ Result found.";
+            body.innerHTML = "";
+            const row = document.createElement("tr");
+            data.forEach(cell => {
+              const td = document.createElement("td");
+              td.textContent = cell;
+              row.appendChild(td);
+            });
+            body.appendChild(row);
+            table.style.display = "table";
+          }
+        }).getResultByRoll(rollNo);
+      }
+    </script>
+  </body>
+</html>
